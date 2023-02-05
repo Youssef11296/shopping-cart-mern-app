@@ -14,6 +14,10 @@ for building both sides, client side (Frontend) and the server side (Backend).
 
 - Redux
 
+- Typescript
+
+- React Hook Form
+
 - SASS (CSS pre-processor)
 
 - Material UI
@@ -23,6 +27,10 @@ for building both sides, client side (Frontend) and the server side (Backend).
 - Node.js
 
 - Express
+
+- JWT
+
+- Bcryptjs
 
 - Mongo DB
 
