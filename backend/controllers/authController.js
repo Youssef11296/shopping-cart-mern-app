@@ -16,7 +16,7 @@ const registerUser = asyncHandler (async (req, res) => {
         'Username is required and must contain from 2 to 30 letters.'
       );
     if (!email) throw new Error ('Email is required.');
-    if (!password)
+    if (!password || password.length < 9)
       throw new Error (
         'Password is required and must contain 9 characters at least.'
       );
@@ -48,4 +48,34 @@ const registerUser = asyncHandler (async (req, res) => {
   }
 });
 
-export {registerUser};
+// login user
+const loginUser = asyncHandler (async (req, res) => {
+  try {
+    const {email, password} = req.body;
+    if (!email) throw new Error ('Email is required.');
+    if (!password)
+      throw new Error (
+        'Password is required and must contain 9 characters at least.'
+      );
+    // finding the user
+    const user = await User.findOne ({email});
+    if (!user) throw new Error ('User does not exist. Please, try register.');
+    // comparing passwords
+    if (user && !await bcrypt.compare (password, user.password))
+      throw new Error ('Password is incorrect.');
+    // response
+    res.status (201).json ({
+      success: true,
+      message: 'Successfully logged in.',
+      data: {
+        username: user.username,
+        email: user.email,
+        token: generateToken (user._id),
+      },
+    });
+  } catch (error) {
+    res.status (400).json ({success: false, message: error.message});
+  }
+});
+
+export {registerUser, loginUser};
