@@ -1,0 +1,25 @@
+{
+  "name": "shopping-cart-mern-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start:client": "cd frontend && npm run dev",
+    "start:server": "cd backend && npm run server",
+    "start:dev": "concurrently \"npm run start:server\" \"npm run start:client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Youssef11296/shopping-cart-mern-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Youssef11296/shopping-cart-mern-app/issues"
+  },
+  "homepage": "https://github.com/Youssef11296/shopping-cart-mern-app#readme",
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  }
+}
