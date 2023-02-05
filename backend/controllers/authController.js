@@ -1,7 +1,9 @@
+// modules
+import bcrypt from 'bcryptjs';
+import asyncHandler from 'express-async-handler';
 // models
 import User from '../models/userModel.js';
-import asyncHandler from 'express-async-handler';
-import bcrypt from 'bcryptjs';
+// helpers
 import {generateToken} from '../utils/helpers.js';
 
 //* Auth Controller
@@ -78,4 +80,22 @@ const loginUser = asyncHandler (async (req, res) => {
   }
 });
 
-export {registerUser, loginUser};
+// get me
+const getMe = asyncHandler (async (req, res) => {
+  try {
+    const {user} = req;
+    const userData = await User.findOne ({_id: user._id});
+    // response
+    res.status (200).json ({
+      success: true,
+      data: {
+        username: userData.username,
+        email: userData.email,
+      },
+    });
+  } catch (error) {
+    res.status (400).json ({success: false, message: error.message});
+  }
+});
+
+export {registerUser, loginUser, getMe};
