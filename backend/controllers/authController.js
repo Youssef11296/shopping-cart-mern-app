@@ -18,6 +18,10 @@ const registerUser = asyncHandler (async (req, res) => {
         throw new Error (
           'Username is required and must contain from 2 to 30 letters.'
         );
+    if (!username.match ('^[a-zA-Z0-9]{2,30}$'))
+      throw new Error (
+        'Username must contain from 2 to 30 letters and can not contain special samples or spaces.'
+      );
     if (!email) throw new Error ('Email is required.');
     if (!password || password.length < 9)
       throw new Error (
