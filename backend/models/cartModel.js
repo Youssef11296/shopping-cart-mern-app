@@ -2,6 +2,12 @@ import {Schema, model} from 'mongoose';
 
 const cartSchema = new Schema (
   {
+    cartName: {
+      type: String,
+      required: true,
+      minlength: [3, 'Cart name must contain 3 letters at least.'],
+      maxlength: [30, 'Cart name can not contain more than 30 letters.'],
+    },
     userId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
@@ -9,8 +15,10 @@ const cartSchema = new Schema (
     },
     productsList: [
       {
-        type: Schema.Types.ObjectId,
-        ref: 'Product',
+        productName: {
+          type: String,
+          required: true,
+        },
       },
     ],
   },

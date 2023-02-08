@@ -17,11 +17,13 @@ const isAuth = async (req, res, next) => {
       req.user = await User.findOne ({_id: decoded.userId});
     }
 
-    if (!token) throw new Error ('Not authorized, no token.');
+    if (!token) {
+      return res.status (401).send ('Not authorized, no token.');
+    }
 
     next ();
   } catch (error) {
-    res.status (400).json ({success: false, message: 'Not authorized'});
+    res.status (401).send ('Not authorized.');
   }
 };
 

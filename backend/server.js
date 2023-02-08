@@ -3,6 +3,7 @@ import cors from 'cors';
 import {config} from 'dotenv';
 import {connectDb} from './configs/dbConfig.js';
 import authRouter from './routes/authRoute.js';
+import cartsRouter from './routes/cartsRoute.js';
 
 // calling dotenv config
 config ();
@@ -19,6 +20,7 @@ app.use (cors ());
 
 // app routes
 app.use ('/api/v1/auth', authRouter);
+app.use ('/api/v1/carts', cartsRouter);
 
 // listening port
 const port = process.env.PORT || 5000;

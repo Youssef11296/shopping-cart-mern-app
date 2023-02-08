@@ -12,11 +12,12 @@ import {generateToken} from '../utils/helpers.js';
 const registerUser = asyncHandler (async (req, res) => {
   try {
     const {username, email, password} = req.body;
-    // basic validation
-    if (!username || username.length < 2 || username.length > 30)
-      throw new Error (
-        'Username is required and must contain from 2 to 30 letters.'
-      );
+    if (username.includes (' ') || username.includes ('-') || username)
+      if (!username || username.length < 2 || username.length > 30)
+        // basic validation
+        throw new Error (
+          'Username is required and must contain from 2 to 30 letters.'
+        );
     if (!email) throw new Error ('Email is required.');
     if (!password || password.length < 9)
       throw new Error (
