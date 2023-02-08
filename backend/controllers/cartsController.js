@@ -75,5 +75,50 @@ const addProductToCart = asyncHandler (async (req, res) => {
   }
 });
 
+// remove product from the cart
+const removeProductFromCart = asyncHandler (async (req, res) => {
+  try {
+    const {user, params: {cartId, productId}} = req;
+
+    const cart = await Cart.findOne ({_id: cartId});
+
+    if (!cart) {
+      res.status (404);
+      throw new Error ('Cart not found.');
+    }
+
+    const isAuthorized = user._id.toString () === cart.userId.toString ();
+
+    if (!isAuthorized)
+      throw new Error ("Sorry, you're not authorized to manage this cart.");
+
+    const islisted = cart.productsList.find (
+      product => product._id.toString () === productId
+    );
+
+    if (!islisted)
+      throw new Error (
+        'Product not found in the cart, you may already removed it.'
+      );
+
+    const updatedCart = cart.$set (
+      'productsList',
+      cart.productsList.filter (
+        product => product._id.toString () !== productId
+      )
+    );
+
+    await updatedCart.save ();
+
+    res.status (201).json ({
+      success: true,
+      message: 'Successfully removed.',
+      data: updatedCart,
+    });
+  } catch (error) {
+    res.status (400).json ({success: false, message: error.message});
+  }
+});
+
 // exports
-export {createCart, addProductToCart};
+export {createCart, addProductToCart, removeProductFromCart};
