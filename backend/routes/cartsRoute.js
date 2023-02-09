@@ -2,6 +2,7 @@ import {Router} from 'express';
 import {
   addProductToCart,
   createCart,
+  deleteCart,
   getMyCart,
   removeProductFromCart,
   updateProductInCart,
@@ -19,5 +20,6 @@ router.delete (
   removeProductFromCart
 );
 router.patch ('/:cartId/productsList/:productId', isAuth, updateProductInCart);
+router.delete ('/:cartId', isAuth, deleteCart);
 
 export default router;

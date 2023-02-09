@@ -164,6 +164,25 @@ const updateProductInCart = asyncHandler (async (req, res) => {
   }
 });
 
+// delete cart
+const deleteCart = asyncHandler (async (req, res) => {
+  try {
+    const {user, params: {cartId}} = req;
+    // getting the cart
+    const cart = await Cart.findOne ({_id: cartId});
+    if (!cart)
+      res.status (404).send ({success: false, message: 'Cart not found.'});
+    // checking user auth
+    isAuthorizedUser (user, cart);
+    // delete cart
+    await cart.delete ();
+    // response
+    res.status (201).json ({success: true, message: 'Successfully deleted.'});
+  } catch (error) {
+    res.status (400).json ({success: false, message: error.message});
+  }
+});
+
 // exports
 export {
   getMyCart,
@@ -171,4 +190,5 @@ export {
   addProductToCart,
   removeProductFromCart,
   updateProductInCart,
+  deleteCart,
 };
