@@ -2,8 +2,23 @@
 import asyncHandler from 'express-async-handler';
 // models
 import Cart from '../models/cartModel.js';
+import {isAuthorizedUser} from '../utils/helpers.js';
 
 //* Cart Controller
+
+// get cart
+const getMyCart = asyncHandler (async (req, res) => {
+  try {
+    const {user} = req;
+    // getting the cart
+    const cart = await Cart.findOne ({userId: user._id});
+    if (!cart) res.status (404).send ('Cart not found.');
+    // resonse
+    res.status (200).json ({success: true, data: cart});
+  } catch (error) {
+    res.status (400).json ({success: false, message: error.message});
+  }
+});
 
 // create cart
 const createCart = asyncHandler (async (req, res) => {
@@ -44,21 +59,18 @@ const addProductToCart = asyncHandler (async (req, res) => {
       throw new Error ('Cart not found.');
     }
 
-    const isAuthorized = user._id.toString () === cart.userId.toString ();
-
-    if (!isAuthorized)
-      throw new Error ("Sorry, you're not authorized to manage this cart.");
+    isAuthorizedUser (user, cart);
 
     if (!productName || productName.length < 3 || productName.length > 30)
       throw new Error (
         'Product name is required and must contain in range from 3 to 30 letters.'
       );
 
-    const isAlraedyListed = cart.productsList.find (
+    const isAlreadyListed = cart.productsList.find (
       product => product.productName === productName
     );
 
-    if (isAlraedyListed) throw new Error ('This product already added.');
+    if (isAlreadyListed) throw new Error ('This product already added.');
 
     const updatedCart = cart.$set ('productsList', [
       ...cart.productsList,
@@ -87,10 +99,7 @@ const removeProductFromCart = asyncHandler (async (req, res) => {
       throw new Error ('Cart not found.');
     }
 
-    const isAuthorized = user._id.toString () === cart.userId.toString ();
-
-    if (!isAuthorized)
-      throw new Error ("Sorry, you're not authorized to manage this cart.");
+    isAuthorizedUser (user, cart);
 
     const islisted = cart.productsList.find (
       product => product._id.toString () === productId
@@ -120,5 +129,46 @@ const removeProductFromCart = asyncHandler (async (req, res) => {
   }
 });
 
+// edit product in the cart
+const updateProductInCart = asyncHandler (async (req, res) => {
+  try {
+    const {user, params: {cartId, productId}, body: {productName}} = req;
+    // get the cart
+    const cart = await Cart.findOne ({_id: cartId});
+    if (!cart) throw new Error ('Cart not found.');
+    // check user auth
+    isAuthorizedUser (user, cart);
+    // get the product
+    const product = cart.productsList.find (
+      product => product._id.toString () === productId
+    );
+    if (!product)
+      throw new Error (
+        "This product does not exist in your cart or it's already removed."
+      );
+    // update the product
+    cart.$set ('productsList', [
+      ...cart.productsList.map (
+        product =>
+          product._id.toString () === productId ? {productName} : product
+      ),
+    ]);
+    // save cart update
+    await cart.save ();
+    // response
+    res
+      .status (201)
+      .json ({success: true, message: 'Successfully updated.', data: cart});
+  } catch (error) {
+    res.status (400).json ({success: false, message: error.message});
+  }
+});
+
 // exports
-export {createCart, addProductToCart, removeProductFromCart};
+export {
+  getMyCart,
+  createCart,
+  addProductToCart,
+  removeProductFromCart,
+  updateProductInCart,
+};

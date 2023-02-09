@@ -28,11 +28,15 @@ const registerUser = asyncHandler (async (req, res) => {
         'Password is required and must contain 9 characters at least.'
       );
     // checking if user already exist
-    const isExistedUser =
-      (await User.findOne ({username})) || (await User.findOne ({email}));
-    if (isExistedUser)
+    const isExistedUserByName = await User.findOne ({username});
+    const isExistedUserByEmail = await User.findOne ({email});
+    if (isExistedUserByName)
       throw new Error (
-        'User already exist. Please, retry with another username and email.'
+        'User with same name already exist. Please, retry with another username.'
+      );
+    if (isExistedUserByEmail)
+      throw new Error (
+        'User with same email already exist. Please, retry with another email.'
       );
     // hashing password
     const hashedPassword = await bcrypt.hash (password, 10);
