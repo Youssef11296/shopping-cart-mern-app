@@ -28,6 +28,8 @@ const registerUser =
         });
       }
     } catch (error) {
-      toast(error);
+      toast("ERROR");
     }
   };
+
+export { registerUser };

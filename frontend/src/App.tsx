@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import HomePage from './pages/home'
+import HomePage from './pages/HomePage'
+import RegisterComponent from './components/AuthComponents/RegisterComponent'
 
 const App = () => {
   return (
